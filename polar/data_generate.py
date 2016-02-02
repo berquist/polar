@@ -6,7 +6,7 @@ import numpy as np
 from horton import *
 
 
-def finitefield_ham(ham, lf, obasis, order_1, order_2, field_1, field_2, xyz=None):
+def finitefield_ham(ham, lf, obasis, f_order, field, xyz=None):
     """
     """
 
@@ -54,3 +54,25 @@ def finitefield_energy(ham, lf, olp, orb, occ_model, method='hf'):
         raise Exception
 
     return ham.compute_energy()
+
+
+def model_finitefield_ham(order, ham, lf, obasis, olp, orb, occ_model, method='hf'):
+    """
+    """
+
+    ham_backup = ham
+
+    samples = 0
+    for i in range(1,order):
+        samples = samples + (i+8)*(i+7)*(i+6)*(i+5)*(i+4)*(i+3)*(i+2)*(i+1)/40320
+    energys = []
+    fields=fields_creator(2,50)
+    fields=fields[0:(samples+1)]
+
+    
+    for i, field in enumerate(fields):
+        ham = deepcopy(ham_backup)
+        ffham = finitefield_ham(ham, lf, obasis, field=field)
+        energys.append(finitefield_energy(ffham, lf, olp, orb, occ_model, method=method))
+    return model(order, fields, energys)
+
