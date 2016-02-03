@@ -4,9 +4,10 @@ import numpy as np
 from itertools import *
 from math import *
 from random import *
-from common import *
-class fields(object):
-    def __init__(self, samples=40, F=0.00005, x=2**0.5, f=None):
+
+from .common import *
+class Fields(object):
+    def __init__(self, samples=50, F=0.00005, x=2**0.25, f=None):
     
         '''
         This class generate fields needed for function fitting
@@ -42,7 +43,7 @@ class fields(object):
         return phi
 
 
-    def field_list(self, order, r=1.0):
+    def field_list(self, order, r):
         '''
         This funciton return back a filed list 
         '''
@@ -72,11 +73,11 @@ class fields(object):
 
         return field
 
-    def field_symmetric(self, order, r=1.0):
+    def field_symmetric(self, order, r):
         '''
         '''
         field_symmetric = np.zeros((3,)*order)
-        field_list = self.field_list(order)
+        field_list = self.field_list(order, r)
         for i,term in enumerate(combinations_with_replacement((0,1,2), order)):
             for term1 in unique(permutations(term)):
                 coeff = fac(order,term1)
@@ -86,7 +87,7 @@ class fields(object):
     def fields(self,order):
         '''
         '''
-        fields=[]
+        fields=[np.zeros((3,)*order)]
         for r in self.f:
             for i in range(self.samples):
                 tmp = self.field_symmetric(order,r)

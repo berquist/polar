@@ -5,7 +5,7 @@ from numpy.linalg import lstsq
 import sympy as sp
 from scipy.optimize import leastsq
 ############################################################
-def model(order, fields, energys):
+def poly_fit(fields, energys, polar_order, f_order):
     """
     Model some data as a rational function.
 
@@ -16,13 +16,15 @@ def model(order, fields, energys):
         bili.append(tmp)
 
     X=[] 
-    for i in fields[1:]:
-        view=i.ravel()
+    for i,field in enumerate(fields[1:]):
+        list_field = []
+        for term in combinations_with_replacement((0,1,2),f_order):
+            list_field.append(field.item(term))
         row=[]
-        for j in range(1,order):
-            for term in combinations_with_replacement(view,j):
+        for j in range(1,polar_order):
+            for term in combinations_with_replacement(list_field,j):
                 row.append(np.prod(term))
         X.append(row)
     X=np.array(X)
-    return lstsq(X,bili)[0][9:18]
+    return lstsq(X,bili)[0][0:9]
 
