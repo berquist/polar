@@ -73,6 +73,17 @@ class Fields(object):
 
         return field
 
+    def fields_list(self,order):
+        '''
+        '''
+        n = (order+1)*(order+2)/2
+        fields=[np.zeros(n)]
+        for r in self.f:
+            for i in range(self.samples):
+                tmp = self.field_list(order,r)
+                fields.append(tmp)
+        return fields
+
     def field_symmetric(self, order, r):
         '''
         '''
