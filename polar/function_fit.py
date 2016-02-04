@@ -26,5 +26,5 @@ def poly_fit(fields, energys, polar_order, f_order):
                 row.append(np.prod(term))
         X.append(row)
     X=np.array(X)
-    return lstsq(X,bili)[0][0:9]
+    return lstsq(X,bili)[0][6:30]
 
