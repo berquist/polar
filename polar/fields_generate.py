@@ -5,7 +5,6 @@ from itertools import *
 from math import *
 from random import *
 
-from .common import *
 class Fields(object):
     def __init__(self, samples=50, F=0.00005, x=2**0.25, f=None):
     
@@ -36,8 +35,13 @@ class Fields(object):
 
     def polar_coordinate(self, order):
         phi=[]
-        for i,term in enumerate(combinations_with_replacement((0,1,2), order)):
+        for term in combinations_with_replacement((0,1,2), order[0]):
             phi.append(uniform(0,pi))
+        if order[0]==order[1]:
+            pass
+        else:
+            for term in combinations_with_replacement((0,1,2), order[1]):
+                phi.append(uniform(0,pi))
         phi=phi[0:-1]
         phi[-1]=phi[-1]*2
         return phi
@@ -76,31 +80,14 @@ class Fields(object):
     def fields_list(self,order):
         '''
         '''
-        n = (order+1)*(order+2)/2
+        if order[0]==order[1]:
+            n = (order[0]+1)*(order[0]+2)/2
+        else:
+            n = (order[0]+1)*(order[0]+2)/2+(order[1]+1)*(order[1]+2)/2
         fields=[np.zeros(n)]
         for r in self.f:
             for i in range(self.samples):
                 tmp = self.field_list(order,r)
-                fields.append(tmp)
+                fields.append(np.array(tmp))
         return fields
 
-    def field_symmetric(self, order, r):
-        '''
-        '''
-        field_symmetric = np.zeros((3,)*order)
-        field_list = self.field_list(order, r)
-        for i,term in enumerate(combinations_with_replacement((0,1,2), order)):
-            for term1 in unique(permutations(term)):
-                coeff = fac(order,term1)
-                field_symmetric.itemset(term1,((field_list[i]**2/coeff)**0.5) )
-        return field_symmetric
-
-    def fields(self,order):
-        '''
-        '''
-        fields=[np.zeros((3,)*order)]
-        for r in self.f:
-            for i in range(self.samples):
-                tmp = self.field_symmetric(order,r)
-                fields.append(tmp)
-        return fields

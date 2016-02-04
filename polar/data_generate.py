@@ -43,15 +43,24 @@ def finitefield_energy(ham, lf, olp, orb, occ_model, method='hf'):
 def model_finitefield_ham(ham, lf, obasis, olp, orb, occ_model, f_order, method='hf'):
     """
     """
-
+    n0=(f_order[0]+1)*(f_order[0]+2)/2
+    n1=(f_order[1]+1)*(f_order[1]+2)/2
     ham_backup = ham
     energys = []
     obj = Fields()
     fields = obj.fields_list(f_order)
-    for i, field in enumerate(fields):
-        ham = copy.deepcopy(ham_backup)
-        ffham = finitefield_ham(ham, lf, obasis, f_order, field)
-        energys.append(finitefield_energy(ffham, lf, olp, orb, occ_model, method=method))
-
-    return poly_fit(fields, energys, 20, f_order)
+    if f_order[0]==f_order[1]:
+        for i, field in enumerate(fields):
+            ham = copy.deepcopy(ham_backup)
+            ffham = finitefield_ham(ham, lf, obasis, f_order[0], field)
+            energys.append(finitefield_energy(ffham, lf, olp, orb, occ_model, method=method))
+    else:
+        for i, field in enumerate(fields):
+            ham = copy.deepcopy(ham_backup)
+            field_0=field[0:n0]
+            field_1=field[n0:(n0+n1)]
+            ham_tmp = finitefield_ham(ham, lf, obasis, f_order[0], field_0)
+            ffham = finitefield_ham(ham_tmp, lf, obasis, f_order[1], field_1)
+            energys.append(finitefield_energy(ffham, lf, olp, orb, occ_model, method=method))
+    return poly_fit(fields, energys, 10, f_order)
 
