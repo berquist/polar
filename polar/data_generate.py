@@ -62,5 +62,5 @@ def model_finitefield_ham(ham, lf, obasis, olp, orb, occ_model, f_order, method=
             ham_tmp = finitefield_ham(ham, lf, obasis, f_order[0], field_0)
             ffham = finitefield_ham(ham_tmp, lf, obasis, f_order[1], field_1)
             energys.append(finitefield_energy(ffham, lf, olp, orb, occ_model, method=method))
-    return poly_fit(fields, energys, 10, f_order)
+    return poly_fit(fields, energys, 4, f_order)
 
