@@ -49,7 +49,6 @@ ham = REffHam(terms, external)
 
 # Decide how to occupy the orbitals (5 alpha electrons)
 occ_model = AufbauOccModel(5)
-#print finitefield_ham(ham, lf, obasis, [1,1] , [np.array([1,1,1])])
 print model_finitefield_ham(ham, lf, obasis, olp, orb, occ_model, [1,1])
 
 

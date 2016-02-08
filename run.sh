@@ -1,3 +1,3 @@
 #!/bin/sh
 
-PYTHONPATH=~/code/horton/ HORTONDATA=~/code/horton/data python $@
+PYTHONPATH=~/Work/code/horton/ HORTONDATA=~/Work/code/horton/data python $@
