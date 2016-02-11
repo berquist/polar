@@ -20,6 +20,7 @@ from polar.function_fit import *
 fn_xyz = context.get_fn('test/H2O.xyz')
 mol = IOData.from_file(fn_xyz)
 # Create a Gaussian basis set
+
 obasis = get_gobasis(mol.coordinates, mol.numbers, 'sto-3g')
 lf =CholeskyLinalgFactory(obasis.nbasis)
 # Create a linalg factory
@@ -49,7 +50,7 @@ ham = REffHam(terms, external)
 
 # Decide how to occupy the orbitals (5 alpha electrons)
 occ_model = AufbauOccModel(5)
-print model_finitefield_ham(ham, lf, obasis, olp, orb, occ_model, [1,1])
 
+print model_finitefield_ham(ham, lf, obasis, olp, orb, occ_model, mol,  [1,2])
 
 

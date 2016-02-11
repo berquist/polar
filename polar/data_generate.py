@@ -5,7 +5,7 @@ import copy
 import numpy as np
 from horton import *
 from .fields_generate import Fields
-from .function_fit import poly_fit
+from .function_fit import poly_fit,rat_fit
 
 def finitefield_ham(ham, lf, obasis, f_order, field, xyz=None):
     """
@@ -40,27 +40,22 @@ def finitefield_energy(ham, lf, olp, orb, occ_model, method='hf'):
     return ham.compute_energy()
 
 
-def model_finitefield_ham(ham, lf, obasis, olp, orb, occ_model, f_order, method='hf'):
+def model_finitefield_ham(ham, lf, obasis, olp, orb, occ_model, mol, f_order, method='hf'):
     """
     """
-    n0=(f_order[0]+1)*(f_order[0]+2)/2
-    n1=(f_order[1]+1)*(f_order[1]+2)/2
     ham_backup = ham
     energys = []
-    obj = Fields()
-    fields = obj.fields_list(f_order)
-    if f_order[0]==f_order[1]:
-        for i, field in enumerate(fields):
+    obj = Fields(mol)
+    fields = obj.fields(f_order, mol)
+    for i, field in enumerate(fields):
+        n0 = 0
+        n1 = 0
+        for i in f_order:
+            n1 +=(i+1)*(i+2)/2
             ham = copy.deepcopy(ham_backup)
-            ffham = finitefield_ham(ham, lf, obasis, f_order[0], field)
-            energys.append(finitefield_energy(ffham, lf, olp, orb, occ_model, method=method))
-    else:
-        for i, field in enumerate(fields):
-            ham = copy.deepcopy(ham_backup)
-            field_0=field[0:n0]
-            field_1=field[n0:(n0+n1)]
-            ham_tmp = finitefield_ham(ham, lf, obasis, f_order[0], field_0)
-            ffham = finitefield_ham(ham_tmp, lf, obasis, f_order[1], field_1)
-            energys.append(finitefield_energy(ffham, lf, olp, orb, occ_model, method=method))
-    return poly_fit(fields, energys, 4, f_order)
+            field_i=field[n0:n1]
+            ffham = finitefield_ham(ham, lf, obasis, i, field_i)
+        n0 = n1
+        energys.append(finitefield_energy(ffham, lf, olp, orb, occ_model, method=method))
+    return rat_fit(fields, energys, [3,4], f_order)
 

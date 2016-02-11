@@ -6,7 +6,7 @@ from math import *
 from random import *
 
 class Fields(object):
-    def __init__(self, samples=50, F=0.00005, x=2**0.25, f=None):
+    def __init__(self, mol, samples=50, F=0.00005, x=2**0.5 ,f=None):
     
         '''
         This class generate fields needed for function fitting
@@ -33,21 +33,28 @@ class Fields(object):
         for i in range(5):
             self.f.append(self.F*self.x**i)
 
+    def get_l(self, mol):
+        l = []
+        for i,term in enumerate(mol.numbers):
+            tmp = mol.coordinates[:,i]
+            column = []
+            for term in combinations(tmp , 2):
+                bili = abs(term[0]-term[1])
+                column.append(bili)
+            l.append(max(column))
+        return l
+
     def polar_coordinate(self, order):
         phi=[]
-        for term in combinations_with_replacement((0,1,2), order[0]):
-            phi.append(uniform(0,pi))
-        if order[0]==order[1]:
-            pass
-        else:
-            for term in combinations_with_replacement((0,1,2), order[1]):
+        for i in order:
+            for term in combinations_with_replacement((0,1,2), i):
                 phi.append(uniform(0,pi))
         phi=phi[0:-1]
         phi[-1]=phi[-1]*2
         return phi
 
 
-    def field_list(self, order, r):
+    def sphere_list(self, order, r):
         '''
         This funciton return back a filed list 
         '''
@@ -77,17 +84,28 @@ class Fields(object):
 
         return field
 
-    def fields_list(self,order):
+    def ellipse_list(self, order, r, mol):
+        l = self.get_l(mol)
+        field = self.sphere_list(order,r)
+        c = 0
+        for i in order:
+            for term in combinations_with_replacement((0,1,2),i):
+                tmp = 1
+                for j in term:
+                    tmp *= l[j]
+                field[c] *=tmp
+                c += 1
+        return field
+
+    def fields(self,order,mol):
         '''
         '''
-        if order[0]==order[1]:
-            n = (order[0]+1)*(order[0]+2)/2
-        else:
-            n = (order[0]+1)*(order[0]+2)/2+(order[1]+1)*(order[1]+2)/2
+        n = 0
+        for i in order:
+            n += (i+1)*(i+2)/2
         fields=[np.zeros(n)]
         for r in self.f:
             for i in range(self.samples):
-                tmp = self.field_list(order,r)
+                tmp = self.ellipse_list(order, r, mol)
                 fields.append(np.array(tmp))
         return fields
-

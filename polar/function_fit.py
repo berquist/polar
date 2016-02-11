@@ -4,7 +4,8 @@ import numpy as np
 from numpy.linalg import lstsq
 import sympy as sp
 from scipy.optimize import leastsq
-############################################################
+
+
 def poly_fit(fields, energys, polar_order, f_order):
     """
     Model some data as a rational function.
