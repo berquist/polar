@@ -5,7 +5,7 @@ import copy
 import numpy as np
 from horton import *
 from .fields_generate import Fields
-from .function_fit import poly_fit,rat_fit
+from .function_fit import poly_fit,rat_fit, solve
 
 def finitefield_ham(ham, lf, obasis, f_order, field, xyz=None):
     """
@@ -40,7 +40,7 @@ def finitefield_energy(ham, lf, olp, orb, occ_model, method='hf'):
     return ham.compute_energy()
 
 
-def model_finitefield_ham(ham, lf, obasis, olp, orb, occ_model, mol, f_order, method='hf'):
+def model_finitefield_ham(ham, lf, obasis, olp, orb, occ_model, mol, f_order, p_order, method='hf'):
     """
     """
     ham_backup = ham
@@ -57,5 +57,5 @@ def model_finitefield_ham(ham, lf, obasis, olp, orb, occ_model, mol, f_order, me
             ffham = finitefield_ham(ham, lf, obasis, i, field_i)
         n0 = n1
         energys.append(finitefield_energy(ffham, lf, olp, orb, occ_model, method=method))
-    return rat_fit(fields, energys, [3,4], f_order)
+    return solve(fields, energys, f_order, [3,4], p_order)
 

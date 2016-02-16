@@ -9,8 +9,8 @@
 from horton import *
 import numpy as np
 import sympy as sp
-from finitefield.model import model_finitefield_ham
-from finitefield.horton import *
+from polar.data_generate import *
+from polar.function_fit import *
 
 # Hartree-Fock calculation
 # ------------------------
@@ -49,7 +49,7 @@ ham = REffHam(terms, external)
 
 # Decide how to occupy the orbitals (5 alpha electrons)
 occ_model = AufbauOccModel(5)
-print model_finitefield_ham(10, ham, lf, obasis, olp, orb, occ_model, method='hf')
 
+model_finitefield_ham(ham, lf, obasis, olp, orb, occ_model, mol, [2], 2)
 
 
