@@ -6,7 +6,7 @@ from math import *
 from random import *
 
 class Fields(object):
-    def __init__(self, mol, samples=50, F=0.005, x=2**0.5 ,f=None):
+    def __init__(self, mol, samples=50, F=0.00005, x=2**0.5 ,f=None):
     
         '''
         This class generate fields needed for function fitting
@@ -39,12 +39,10 @@ class Fields(object):
             tmp = mol.coordinates[:,i]
             column = []
             for term in combinations(tmp , 2):
-                bili = abs(term[0]-term[1])
-                if bili==0.:
-                    bili=0.48
+                bili = 2.6+abs(term[0]-term[1])
                 column.append(bili)
             l.append(max(column))
-        l = [1,1,1]
+        #l = [1,1,1]
         return l
 
     def polar_coordinate(self, order):
