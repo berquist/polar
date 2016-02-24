@@ -13,8 +13,6 @@ class Fields(object):
 
         **Arguments:**
 
-        order
-            A tuple with two field order
 
         samples
             number of sample points in each sphere shell
@@ -34,6 +32,16 @@ class Fields(object):
             self.f.append(self.F*self.x**i)
 
     def get_l(self, mol):
+        '''
+        This function mesure the x, y, z distance compoent between 
+        all possible atom pairs and return back the biggest distance
+
+        **Arguments:**
+
+
+        mol
+            object moleculer come from horton
+        '''
         l = []
         for i,term in enumerate(mol.numbers):
             tmp = mol.coordinates[:,i]
@@ -42,10 +50,19 @@ class Fields(object):
                 bili = 2.6+abs(term[0]-term[1])
                 column.append(bili)
             l.append(max(column))
-        #l = [1,1,1]
         return l
 
     def polar_coordinate(self, order):
+        '''
+        This function create a random point on a n dimensional hypersphere 
+        in polar coordinate
+
+        **Arguments:**
+
+
+        order
+            field order
+        '''
         phi=[]
         for i in order:
             for term in combinations_with_replacement((0,1,2), i):
@@ -57,7 +74,17 @@ class Fields(object):
 
     def sphere_list(self, order, r):
         '''
-        This funciton return back a filed list 
+        This funciton return back a n dimensional hyper sphere field list 
+
+        **Arguments:**
+
+
+        order
+            field order
+
+        r
+            a list of radius of several sphere layers
+            [F0, F0*x, F0*x**2, F0*x**3 ...]
         '''
         field = []
         phi = self.polar_coordinate(order)
@@ -86,6 +113,22 @@ class Fields(object):
         return field
 
     def ellipse_list(self, order, r, mol):
+        '''
+        This funciton return back a n dimensional hyper ellipse field list 
+
+        **Arguments:**
+
+
+        order
+            field order
+
+        r
+            a list of radius of several sphere layers
+            [F0, F0*x, F0*x**2, F0*x**3 ...]
+
+        mol
+            object moleculer come from horton
+        '''
         l = self.get_l(mol)
         field = self.sphere_list(order,r)
         c = 0
@@ -100,6 +143,17 @@ class Fields(object):
 
     def fields(self,order,mol):
         '''
+        This function return back a set of fields with certain field 
+        pattern
+
+        **Arguments:**
+
+        
+        order
+            field order
+
+        mol
+            object moleculer come from horton
         '''
         n = 0
         for i in order:
