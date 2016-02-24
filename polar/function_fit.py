@@ -6,30 +6,29 @@ import sympy as sp
 from scipy.optimize import leastsq
 from math import *
 
-def poly_fit(fields, energys, polar_order, f_order):
-    """
-    Model some data as a rational function.
-
-    """
-    bili=[]
-    for i in energys[1:]:
-        tmp=i-energys[0]
-        bili.append(tmp)
-
-    X=[] 
-    for i,field in enumerate(fields[1:]):
-        row=[]
-        for k in range(1,polar_order):
-            for term in combinations_with_replacement(field,k):
-                row.append(np.prod(term))
-        X.append(row)
-    X=np.array(X)
-    return lstsq(X,bili)[0]
 
 def rat_fit(fields, energys, f_order, e_order):
     """
-    Model some data as a rational function.
+    Model some data as a rational function. It return back a list of 
+    coefficient with sequnce, which is coefficient of denominator goes first
+    and followed by coefficient of numerator.
 
+    **Arguments**
+
+
+    fields
+        a set of fields for rational function fitting
+
+    energys
+        a set of energys for rational function fitting
+
+    f_order
+        order of field
+
+    e_order
+        expansion order. Which is a list with two elements,
+        the first one is order of denominator and the second
+        one if order of numerator
     """
     bili=[]
     for i in energys[1:]:
@@ -54,6 +53,16 @@ def rat_fit(fields, energys, f_order, e_order):
 
 def create_poly(f_order, e_order, coeff, coeff_0):
     """
+    This function create a scipy polynomial functions with given coefficient
+
+    **Arguments**
+
+
+    coeff
+        a list of coefficient
+
+    coeff_0
+        the first coefficent which is usually 1 for denominator E(0) for numerator
     """
 
     # Create the coordinate system
@@ -80,6 +89,8 @@ def create_poly(f_order, e_order, coeff, coeff_0):
 
 def create_ratfunc(f_order, top_order, bottom_order, top_coeff, bottom_coeff, top_coeff0, bottom_coeff0):
     """
+    This function create a scipy rational functions with given coefficient
+
     """
 
     # Process the coordinate system
@@ -93,6 +104,11 @@ def create_ratfunc(f_order, top_order, bottom_order, top_coeff, bottom_coeff, to
 
 
 def solve(fields, energys, f_order, e_order, p_order):
+    """
+    This function create a scipy rational functions and derivative it according 
+    to the polarizability order.
+
+    """
     # Create the coordinate system
     coord = []
     for i in f_order:

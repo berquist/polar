@@ -9,6 +9,25 @@ from .function_fit import poly_fit,rat_fit, solve
 
 def finitefield_ham(ham, lf, obasis, f_order, field, xyz=None):
     """
+    This function return back hamiltonian with multipole moment term in external field
+
+    **Arguments**
+    
+
+    lf
+        LinalgFactory object from horton
+
+    obasis
+        Gaussian basis set object from horton
+
+    f_order
+        order of field
+
+    field
+        field
+
+    xyz
+        center of multipole moment, it's [0. 0. 0.] by default
     """
 
     if not xyz:
@@ -29,6 +48,20 @@ def finitefield_ham(ham, lf, obasis, f_order, field, xyz=None):
 
 def finitefield_energy(ham, lf, olp, orb, occ_model, method='hf'): 
     """
+    This function return back energy with multipole moment term in external field
+
+    **Arguments**
+
+    
+    olp
+        overlap matrix from horton
+
+    orb
+        alpha orbitals from horton, be carefully it also named exp_alpha. Make sure the 
+        varible name keep consistant when you use it.
+
+    occ_model
+        horton object to decide how to occupy the orbitals
     """
 
     if method is 'hf':
@@ -42,6 +75,16 @@ def finitefield_energy(ham, lf, olp, orb, occ_model, method='hf'):
 
 def model_finitefield_ham(ham, lf, obasis, olp, orb, occ_model, mol, f_order, p_order, method='hf'):
     """
+    This function return back a set of fields and the energys for function fitting
+
+    **Arguments**
+
+    f_order
+        a list include field order
+
+    p_order
+        polarizability order
+
     """
     ham_backup = ham
     energys = []
