@@ -1,17 +1,15 @@
-from itertools import *
+from itertools import combinations_with_replacement
+from math import factorial
 
 import numpy as np
 from numpy.linalg import lstsq
 import sympy as sp
-from scipy.optimize import leastsq
-from math import *
 
 
-def rat_fit(fields, energys, f_order, e_order):
-    """
-    Model some data as a rational function. It return back a list of 
-    coefficient with sequnce, which is coefficient of denominator goes first
-    and followed by coefficient of numerator.
+def rat_fit(fields, energies, f_order, e_order):
+    """Model some data as a rational function. It returns back a list of
+    coefficients with sequnce, which is coefficient of denominator
+    goes first and followed by coefficient of numerator.
 
     **Arguments**
 
@@ -19,8 +17,8 @@ def rat_fit(fields, energys, f_order, e_order):
     fields
         a set of fields for rational function fitting
 
-    energys
-        a set of energys for rational function fitting
+    energies
+        a set of energies for rational function fitting
 
     f_order
         order of field
@@ -29,26 +27,27 @@ def rat_fit(fields, energys, f_order, e_order):
         expansion order. Which is a list with two elements,
         the first one is order of denominator and the second
         one if order of numerator
+
     """
-    bili=[]
-    for i in energys[1:]:
-        tmp=i-energys[0]
+    bili = []
+    for i in energies[1:]:
+        tmp = i - energies[0]
         bili.append(tmp)
 
-    X=[] 
-    for i,field in enumerate(fields[1:]):
-        row=[]
+    X = []
+    for i, field in enumerate(fields[1:]):
+        row = []
         for j in range(e_order[0]):
-            for term in combinations_with_replacement(field,j+1):
-                tmpp = np.prod(term)*-energys[i+1]
+            for term in combinations_with_replacement(field, j + 1):
+                tmpp = np.prod(term) * -energies[i + 1]
                 row.append(tmpp)
         for k in range(e_order[1]):
-            for term in combinations_with_replacement(field,k+1):
+            for term in combinations_with_replacement(field, k + 1):
                 tmpp = np.prod(term)
                 row.append(tmpp)
         X.append(row)
-    X=np.array(X)
-    return lstsq(X,bili)[0]
+    X = np.array(X)
+    return lstsq(X, bili)[0]
 
 
 def create_poly(f_order, e_order, coeff, coeff_0):
@@ -57,6 +56,11 @@ def create_poly(f_order, e_order, coeff, coeff_0):
 
     **Arguments**
 
+    f_order
+        xxx
+
+    e_order
+        xxx
 
     coeff
         a list of coefficient
@@ -68,7 +72,7 @@ def create_poly(f_order, e_order, coeff, coeff_0):
     # Create the coordinate system
     coord = []
     for i in f_order:
-        for term in combinations_with_replacement('xyz',i):
+        for term in combinations_with_replacement('xyz', i):
             coord.append(''.join(term))
     field = []
     for term in coord:
@@ -77,13 +81,12 @@ def create_poly(f_order, e_order, coeff, coeff_0):
     poly = coeff_0
     c = 0
     for i in range(e_order):
-        for term in combinations_with_replacement(field,i+1):
-            tmp =1
+        for term in combinations_with_replacement(field, i+1):
+            tmp = 1
             for bili in term:
-                
                 tmp *= bili
-            poly += tmp*coeff[c]
-            c = c+1
+            poly += tmp * coeff[c]
+            c += 1
     return poly
 
 
@@ -94,25 +97,23 @@ def create_ratfunc(f_order, top_order, bottom_order, top_coeff, bottom_coeff, to
     """
 
     # Process the coordinate system
-    
+
     # Create the rational function
     ratfunc = create_poly(f_order, top_order, top_coeff, top_coeff0)
     ratfunc /= create_poly(f_order, bottom_order, bottom_coeff, bottom_coeff0)
     return ratfunc
 
 
-
-
 def solve(fields, energys, f_order, e_order, p_order):
     """
-    This function create a scipy rational functions and derivative it according 
+    This function create a scipy rational functions and derivative it according
     to the polarizability order.
 
     """
     # Create the coordinate system
     coord = []
     for i in f_order:
-        for term in combinations_with_replacement('xyz',i):
+        for term in combinations_with_replacement('xyz', i):
             coord.append(''.join(term))
     field = []
     for term in coord:
@@ -122,10 +123,10 @@ def solve(fields, energys, f_order, e_order, p_order):
     n1 = 0
     for i in range(e_order[0]):
         i += 1
-        n0 +=factorial(i+len(field)-1)/(factorial(len(field)-1)*factorial(i))
+        n0 += factorial(i + len(field) - 1) / (factorial(len(field) - 1) * factorial(i))
     for j in range(e_order[1]):
         j += 1
-        n1 +=factorial(j+len(field)-1)/(factorial(len(field)-1)*factorial(j))
+        n1 += factorial(j + len(field) - 1) / (factorial(len(field) - 1) * factorial(j))
     bottom_order = e_order[0]
     top_order = e_order[1]
 
@@ -145,7 +146,3 @@ def solve(fields, energys, f_order, e_order, p_order):
         polar.append(fun)
 
     return polar
-
-
-
-
